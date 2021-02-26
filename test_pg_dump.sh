@@ -23,6 +23,7 @@ do
 	st=`date +"%s%3N"`
 	psql -d $db_name2 -U postgres -q < $path_to_backup/$db_name.sql
 	s4=$((`date +"%s%3N"` - $st))
+	dropdb -U postgres $db_name2
 	echo $s1 "out" $s2 "size "$s3 "in" $s4 >>$log_file
 done
 
@@ -44,7 +45,8 @@ do
 		st=`date +"%s%3N"`
 		gunzip < $path_to_backup/$db_name.sql.gz |psql -d $db_name2 -U postgres -q
 		s4=$((`date +"%s%3N"` - $st))
-
+		
+		dropdb -U postgres $db_name2
 		echo $s1 "out" $s2 "size "$s3 "in" $s4 >>$log_file
 	done
 done
@@ -66,7 +68,8 @@ do
 		st=`date +"%s%3N"`
 		pigz -d < $path_to_backup/$db_name.sql.gz |psql -d $db_name2 -U postgres -q
 		s4=$((`date +"%s%3N"` - $st))
-
+		
+		dropdb -U postgres $db_name2
 		echo $s1 "out" $s2 "size "$s3 "in" $s4 >>$log_file
 	done
 done
@@ -87,6 +90,8 @@ do
 	st=`date +"%s%3N"`
 	pg_restore -U postgres -d $db_name2 $path_to_backup/$db_name.dmp
 	s4=$((`date +"%s%3N"` - $st))
+	
+	dropdb -U postgres $db_name2
 	echo $s1 "out" $s2 "size "$s3 "in" $s4 >>$log_file
 done
 
@@ -107,6 +112,8 @@ do
 		st=`date +"%s%3N"`
 		pg_restore -U postgres -j$z -d $db_name2 $path_to_backup/$db_name.dmp
 		s4=$((`date +"%s%3N"` - $st))
+		
+		dropdb -U postgres $db_name2
 		echo $s1 "out" $s2 "size "$s3 "in" $s4 >>$log_file
 	done
 done
@@ -129,6 +136,8 @@ do
 		pigz -d $path_to_backup/$db_name.dmp.gz
 		pg_restore -U postgres -j$j -d $db_name2 $path_to_backup/$db_name.dmp
 		s4=$((`date +"%s%3N"` - $st))
+		
+		dropdb -U postgres $db_name2
 		echo $s1 "out" $s2 "size "$s3 "in" $s4 >>$log_file
 	done
 done
@@ -150,8 +159,9 @@ do
 	st=`date +"%s%3N"`
 	pg_restore -U postgres -d $db_name2 $path_to_backup/$db_name
 	s4=$((`date +"%s%3N"` - $st))
+	
+	dropdb -U postgres $db_name2
 	echo $s1 "out" $s2 "size "$s3 "in" $s4 >>$log_file
-
 done
 
 echo "========================"
@@ -165,12 +175,14 @@ do
 		st=`date +"%s%3N"`
 		pg_dump -Fd -Z0 -j$j -d $db_name -U postgres -f $path_to_backup/$db_name
 		s2=$((`date +"%s%3N"` - $st))
-	   s3=`du -sh $path_to_backup|awk '{print $1}'`
+	   	s3=`du -sh $path_to_backup|awk '{print $1}'`
 
 		createdb -U postgres $db_name2
 		st=`date +"%s%3N"`
 		pg_restore -U postgres -d $db_name2 -j$j $path_to_backup/$db_name
 		s4=$((`date +"%s%3N"` - $st))
+		
+		dropdb -U postgres $db_name2
 		echo $s1 "out" $s2 "size "$s3 "in" $s4 >>$log_file
 
 	done
@@ -195,6 +207,8 @@ do
 			st=`date +"%s%3N"`
 			pg_restore -U postgres -d $db_name2 -j$j $path_to_backup/$db_name
 			s4=$((`date +"%s%3N"` - $st))
+			
+			dropdb -U postgres $db_name2
 			echo $s1 "out" $s2 "size "$s3 "in" $s4 >>$log_file
 		done
 	done
