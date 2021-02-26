@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 num_iterations=5
 db_name='demo'
 db_name2='test2'
