@@ -14,4 +14,3 @@ sync; echo 3 > /proc/sys/vm/drop_caches
 free –m>>$LOG
 rm -rf /var/lib/pgsql/test/*
 echo ‘================================================‘>>$LOG
-#add simple comment
